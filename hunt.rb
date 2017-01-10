@@ -6,6 +6,7 @@ require 'gosu'
 TILES_X, TILES_Y = 20, 15
 TILE_SIZE = 40
 
+
 class EmeraldHunt < Gosu::Window
   def initialize
     super(TILES_X * TILE_SIZE + TILE_SIZE * 2, TILES_Y * TILE_SIZE + TILE_SIZE * 2)
@@ -49,6 +50,7 @@ class EmeraldHunt < Gosu::Window
   end
 end
 
+
 class Board
   def initialize
     @null_object = NullObject.new
@@ -80,6 +82,7 @@ class Board
   end
 end
 
+
 class Tile
   def initialize(contents)
     @contents = contents
@@ -94,6 +97,7 @@ class Tile
   end
 end
 
+
 class NullObject
   def initialize
   end
@@ -102,6 +106,7 @@ class NullObject
     :null_object
   end
 end
+
 
 class Player
   attr_reader :x, :y
@@ -154,5 +159,6 @@ class Player
     last_move_delta >= MINIMUM_MOVE_TIME
   end
 end
+
 
 EmeraldHunt.new.show if __FILE__ == $0
