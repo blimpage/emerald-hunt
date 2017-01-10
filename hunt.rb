@@ -12,7 +12,7 @@ class EmeraldHunt < Gosu::Window
 
     self.caption = "Emerald Hunt"
 
-    @matrix = Array.new(TILES_Y, Array.new(TILES_X))
+    @board = Board.new
     @player = Player.new
 
     @font = Gosu::Font.new(10)
@@ -23,16 +23,28 @@ class EmeraldHunt < Gosu::Window
   end
 
   def draw
+    @board.each_tile do |tile, x_index, y_index|
+      x_position = TILE_SIZE + x_index * TILE_SIZE
+      y_position = TILE_SIZE + y_index * TILE_SIZE
+
+      if @player.x == x_index && @player.y == y_index
+        @font.draw("@@@", x_position, y_position, 1)
+      else
+        @font.draw("#{x_index}, #{y_index}", x_position, y_position, 0, 1, 1, 0xff_888888)
+      end
+    end
+  end
+end
+
+class Board
+  def initialize
+    @matrix = Array.new(TILES_Y, Array.new(TILES_X))
+  end
+
+  def each_tile(&block)
     @matrix.each_with_index do |row, y_index|
       row.each_with_index do |tile, x_index|
-        x_position = TILE_SIZE + x_index * TILE_SIZE
-        y_position = TILE_SIZE + y_index * TILE_SIZE
-
-        if @player.x == x_index && @player.y == y_index
-          @font.draw("@@@", x_position, y_position, 1)
-        else
-          @font.draw("#{x_index}, #{y_index}", x_position, y_position, 0, 1, 1, 0xff_888888)
-        end
+        yield(tile, x_index, y_index)
       end
     end
   end
