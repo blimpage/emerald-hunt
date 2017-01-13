@@ -6,6 +6,9 @@ class BaseObject
     @y = y
   end
 
+  def update
+  end
+
   def object_type
     raise NotImplementedError
   end

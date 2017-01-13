@@ -24,7 +24,9 @@ class EmeraldHunt < Gosu::Window
   end
 
   def update
-    @player.update
+    BOARD.each_tile do |tile, x_index, y_index|
+      tile.contents.update
+    end
 
     if Gosu::button_down?(Gosu::KbD) && Gosu.milliseconds - @last_debug_dump > 1000
       @last_debug_dump = Gosu.milliseconds
@@ -81,7 +83,10 @@ class Board
     end
   end
 
-  def move_object(moving_object, destination_x, destination_y, x_direction, y_direction)
+  def move_object(moving_object, x_direction, y_direction)
+    destination_x = moving_object.x + x_direction
+    destination_y = moving_object.y + y_direction
+
     return false unless tile_in_bounds?(destination_x, destination_y)
 
     destination_tile = tile_at(destination_x, destination_y)
@@ -91,7 +96,7 @@ class Board
       destination_tile.set_contents(moving_object)
       moving_object.update_position(destination_x, destination_y)
       true
-    elsif destination_tile.contents.can_be_pushed_by?(moving_object) && move_object(destination_tile.contents, destination_x + x_direction, destination_y + y_direction, x_direction, y_direction)
+    elsif destination_tile.contents.can_be_pushed_by?(moving_object) && move_object(destination_tile.contents, x_direction, y_direction)
       free_tile(moving_object.x, moving_object.y)
       destination_tile.set_contents(moving_object)
       moving_object.update_position(destination_x, destination_y)

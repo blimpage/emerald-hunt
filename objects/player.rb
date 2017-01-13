@@ -12,19 +12,23 @@ class Player < BaseObject
   def update
     moved = if can_move_now?
       if Gosu::button_down?(Gosu::KbLeft)
-        BOARD.move_object(self, @x - 1, @y    , -1, 0 )
+        move(-1,  0)
       elsif Gosu::button_down?(Gosu::KbRight)
-        BOARD.move_object(self, @x + 1, @y    , 1,  0 )
+        move( 1,  0)
       elsif Gosu::button_down?(Gosu::KbUp)
-        BOARD.move_object(self, @x,     @y - 1, 0,  -1)
+        move( 0, -1)
       elsif Gosu::button_down?(Gosu::KbDown)
-        BOARD.move_object(self, @x,     @y + 1, 0,   1)
+        move( 0,  1)
       end
     end
 
     if !!moved
       @last_move_time = Gosu.milliseconds
     end
+  end
+
+  def move(x_direction, y_direction)
+    BOARD.move_object(self, x_direction, y_direction)
   end
 
   def object_type
