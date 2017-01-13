@@ -1,7 +1,10 @@
 # Encoding: UTF-8
 
-require 'rubygems'
-require 'gosu'
+require "rubygems"
+require "gosu"
+
+Dir[File.join(__dir__, "objects", "*.rb")].each { |file| require file }
+
 
 TILES_X, TILES_Y = 20, 15
 TILE_SIZE = 40
@@ -133,106 +136,6 @@ class Tile
 
   def empty?
     object_type == :null_object
-  end
-end
-
-
-class BaseObject
-  attr_reader :x, :y
-
-  def initialize(x, y)
-    @x = x
-    @y = y
-  end
-
-  def object_type
-    raise NotImplementedError
-  end
-
-  def update_position(x, y)
-    @x = x
-    @y = y
-  end
-
-  def can_be_pushed_by?(object)
-    pushers.include?(object.object_type)
-  end
-
-  def pushers
-    []
-  end
-end
-
-
-class NullObject < BaseObject
-  def initialize
-  end
-
-  def object_type
-    :null_object
-  end
-end
-
-
-class Wall < BaseObject
-  def object_type
-    :wall
-  end
-end
-
-
-class Rock < BaseObject
-  def object_type
-    :rock
-  end
-
-  def pushers
-    [:player]
-  end
-end
-
-
-class Player < BaseObject
-  MINIMUM_MOVE_TIME = 150
-
-  def initialize
-    @x = (TILES_X / 2).floor
-    @y = (TILES_Y / 2).floor
-    @last_move_time = Gosu.milliseconds
-
-    BOARD.set_tile_contents(@x, @y, self)
-  end
-
-  def update
-    moved = if can_move_now?
-      if Gosu::button_down?(Gosu::KbLeft)
-        BOARD.move_object(self, @x - 1, @y    , -1, 0 )
-      elsif Gosu::button_down?(Gosu::KbRight)
-        BOARD.move_object(self, @x + 1, @y    , 1,  0 )
-      elsif Gosu::button_down?(Gosu::KbUp)
-        BOARD.move_object(self, @x,     @y - 1, 0,  -1)
-      elsif Gosu::button_down?(Gosu::KbDown)
-        BOARD.move_object(self, @x,     @y + 1, 0,   1)
-      end
-    end
-
-    if !!moved
-      @last_move_time = Gosu.milliseconds
-    end
-  end
-
-  def object_type
-    :player
-  end
-
-  private
-
-  def last_move_delta
-    Gosu.milliseconds - @last_move_time
-  end
-
-  def can_move_now?
-    last_move_delta >= MINIMUM_MOVE_TIME
   end
 end
 
