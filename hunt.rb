@@ -137,21 +137,7 @@ class Tile
 end
 
 
-class NullObject
-  def initialize
-  end
-
-  def object_type
-    :null_object
-  end
-
-  def can_be_pushed_by?(object)
-    false
-  end
-end
-
-
-class Wall
+class BaseObject
   attr_reader :x, :y
 
   def initialize(x, y)
@@ -160,41 +146,53 @@ class Wall
   end
 
   def object_type
-    :wall
-  end
-
-  def can_be_pushed_by?(object)
-    false
-  end
-end
-
-
-class Rock
-  attr_reader :x, :y
-
-  def initialize(x, y)
-    @x = x
-    @y = y
-  end
-
-  def object_type
-    :rock
-  end
-
-  def can_be_pushed_by?(object)
-    object.object_type == :player
+    raise NotImplementedError
   end
 
   def update_position(x, y)
     @x = x
     @y = y
   end
+
+  def can_be_pushed_by?(object)
+    pushers.include?(object.object_type)
+  end
+
+  def pushers
+    []
+  end
 end
 
 
-class Player
-  attr_reader :x, :y
+class NullObject < BaseObject
+  def initialize
+  end
 
+  def object_type
+    :null_object
+  end
+end
+
+
+class Wall < BaseObject
+  def object_type
+    :wall
+  end
+end
+
+
+class Rock < BaseObject
+  def object_type
+    :rock
+  end
+
+  def pushers
+    [:player]
+  end
+end
+
+
+class Player < BaseObject
   MINIMUM_MOVE_TIME = 150
 
   def initialize
@@ -223,17 +221,8 @@ class Player
     end
   end
 
-  def update_position(x, y)
-    @x = x
-    @y = y
-  end
-
   def object_type
     :player
-  end
-
-  def can_be_pushed_by?(object)
-    false
   end
 
   private
