@@ -53,6 +53,7 @@ end
 class Board
   def initialize
     @null_object = NullObject.new
+
     @matrix = Array.new(TILES_Y) do
       Array.new(TILES_X) do
         if rand(100) < 20
@@ -83,16 +84,16 @@ class Board
     end
   end
 
-  def set_tile_contents(x_index, y_index, contents)
-    tile_at(x_index, y_index).set_contents(contents)
+  def set_tile_contents(x, y, contents)
+    tile_at(x, y).set_contents(contents)
   end
 
-  def free_tile(x_index, y_index)
-    tile_at(x_index, y_index).set_contents(@null_object)
+  def free_tile(x, y)
+    tile_at(x, y).set_contents(@null_object)
   end
 
-  def tile_at(x_index, y_index)
-    @matrix[y_index][x_index]
+  def tile_at(x, y)
+    @matrix[y][x]
   end
 
   def tile_in_bounds?(x, y)
