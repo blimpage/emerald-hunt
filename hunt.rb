@@ -37,11 +37,13 @@ class EmeraldHunt < Gosu::Window
 
       case tile.object_type
       when :player
-        @font.draw("@@@", x_position, y_position, 1)
+        @font.draw("@@@", x_position, y_position, 0, 1, 1, 0xff_22FF22)
       when :null_object
-        @font.draw("#{x_index}, #{y_index}", x_position, y_position, 0, 1, 1, 0xff_888888)
+        @font.draw("#{x_index}, #{y_index}", x_position, y_position, 0, 1, 1, 0xff_444444)
       when :wall
         @font.draw("WWW", x_position, y_position, 0, 1, 1, 0xff_0099CC)
+      when :rock
+        @font.draw("RRR", x_position, y_position, 0, 1, 1, 0xff_AAAAAA)
       else
         @font.draw("???", x_position, y_position, 0, 1, 1, 0xff_ff0000)
       end
@@ -54,10 +56,13 @@ class Board
   def initialize
     @null_object = NullObject.new
 
-    @matrix = Array.new(TILES_Y) do
-      Array.new(TILES_X) do
-        if rand(100) < 20
-          Tile.new(Wall.new)
+    @matrix = Array.new(TILES_Y) do |y_index|
+      Array.new(TILES_X) do |x_index|
+        case rand(100)
+        when (0..20)
+          Tile.new(Wall.new(x_index, y_index))
+        when (21..40)
+          Tile.new(Rock.new(x_index, y_index))
         else
           Tile.new(@null_object)
         end
@@ -73,10 +78,19 @@ class Board
     end
   end
 
-  def move_object(moving_object, destination_x, destination_y)
-    if tile_in_bounds?(destination_x, destination_y) && tile_at(destination_x, destination_y).empty? # || destination_tile.contents.can_be_moved_by?(moving_object)
+  def move_object(moving_object, destination_x, destination_y, x_direction, y_direction)
+    return false unless tile_in_bounds?(destination_x, destination_y)
+
+    destination_tile = tile_at(destination_x, destination_y)
+
+    if destination_tile.empty?
       free_tile(moving_object.x, moving_object.y)
-      tile_at(destination_x, destination_y).set_contents(moving_object)
+      destination_tile.set_contents(moving_object)
+      moving_object.update_position(destination_x, destination_y)
+      true
+    elsif destination_tile.contents.can_be_pushed_by?(moving_object) && move_object(destination_tile.contents, destination_x + x_direction, destination_y + y_direction, x_direction, y_direction)
+      free_tile(moving_object.x, moving_object.y)
+      destination_tile.set_contents(moving_object)
       moving_object.update_position(destination_x, destination_y)
       true
     else
@@ -103,6 +117,8 @@ end
 
 
 class Tile
+  attr_reader :contents
+
   def initialize(contents)
     @contents = contents
   end
@@ -128,15 +144,50 @@ class NullObject
   def object_type
     :null_object
   end
+
+  def can_be_pushed_by?(object)
+    false
+  end
 end
 
 
 class Wall
-  def initialize
+  attr_reader :x, :y
+
+  def initialize(x, y)
+    @x = x
+    @y = y
   end
 
   def object_type
     :wall
+  end
+
+  def can_be_pushed_by?(object)
+    false
+  end
+end
+
+
+class Rock
+  attr_reader :x, :y
+
+  def initialize(x, y)
+    @x = x
+    @y = y
+  end
+
+  def object_type
+    :rock
+  end
+
+  def can_be_pushed_by?(object)
+    object.object_type == :player
+  end
+
+  def update_position(x, y)
+    @x = x
+    @y = y
   end
 end
 
@@ -157,13 +208,13 @@ class Player
   def update
     moved = if can_move_now?
       if Gosu::button_down?(Gosu::KbLeft)
-        BOARD.move_object(self, @x - 1, @y    )
+        BOARD.move_object(self, @x - 1, @y    , -1, 0 )
       elsif Gosu::button_down?(Gosu::KbRight)
-        BOARD.move_object(self, @x + 1, @y    )
+        BOARD.move_object(self, @x + 1, @y    , 1,  0 )
       elsif Gosu::button_down?(Gosu::KbUp)
-        BOARD.move_object(self, @x,     @y - 1)
+        BOARD.move_object(self, @x,     @y - 1, 0,  -1)
       elsif Gosu::button_down?(Gosu::KbDown)
-        BOARD.move_object(self, @x,     @y + 1)
+        BOARD.move_object(self, @x,     @y + 1, 0,   1)
       end
     end
 
@@ -179,6 +230,10 @@ class Player
 
   def object_type
     :player
+  end
+
+  def can_be_pushed_by?(object)
+    false
   end
 
   private
