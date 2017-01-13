@@ -1,6 +1,4 @@
 class Player < BaseObject
-  MINIMUM_MOVE_TIME = 150
-
   def initialize
     @x = (TILES_X / 2).floor
     @y = (TILES_Y / 2).floor
@@ -27,21 +25,7 @@ class Player < BaseObject
     end
   end
 
-  def move(x_direction, y_direction)
-    BOARD.move_object(self, x_direction, y_direction)
-  end
-
   def object_type
     :player
-  end
-
-  private
-
-  def last_move_delta
-    Gosu.milliseconds - @last_move_time
-  end
-
-  def can_move_now?
-    last_move_delta >= MINIMUM_MOVE_TIME
   end
 end
