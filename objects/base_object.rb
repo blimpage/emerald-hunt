@@ -6,7 +6,7 @@ class BaseObject
   def initialize(x, y)
     @x = x
     @y = y
-    @last_move_time = Gosu.milliseconds
+    touch_last_move_time
   end
 
   def update
@@ -17,7 +17,7 @@ class BaseObject
   end
 
   def move(x_direction, y_direction)
-    BOARD.move_object(self, x_direction, y_direction)
+    BOARD.try_move(self, x_direction, y_direction)
   end
 
   def update_position(x, y)
@@ -29,8 +29,22 @@ class BaseObject
     pushers.include?(object.object_type)
   end
 
+  def slippable?
+    # will this object slip off a slippery object if it lands on the slippery object from above?
+    true
+  end
+
+  def slippery?
+    # will slippable objects slip off this object if they land on the this object from above?
+    false
+  end
+
   def pushers
     []
+  end
+
+  def touch_last_move_time
+    @last_move_time = Gosu.milliseconds
   end
 
   def can_move_now?

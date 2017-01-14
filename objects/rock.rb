@@ -8,12 +8,14 @@ class Rock < BaseObject
       move(0, 1)
     end
 
-    if !!moved
-      @last_move_time = Gosu.milliseconds
-    end
+    touch_last_move_time if !!moved
   end
 
   def pushers
     [:player]
+  end
+
+  def slippery?
+    true
   end
 end

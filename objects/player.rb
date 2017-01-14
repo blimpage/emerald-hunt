@@ -20,12 +20,14 @@ class Player < BaseObject
       end
     end
 
-    if !!moved
-      @last_move_time = Gosu.milliseconds
-    end
+    touch_last_move_time if !!moved
   end
 
   def object_type
     :player
+  end
+
+  def slippable?
+    false
   end
 end

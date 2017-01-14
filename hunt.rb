@@ -83,7 +83,7 @@ class Board
     end
   end
 
-  def move_object(moving_object, x_direction, y_direction)
+  def try_move(moving_object, x_direction, y_direction)
     destination_x = moving_object.x + x_direction
     destination_y = moving_object.y + y_direction
 
@@ -91,19 +91,51 @@ class Board
 
     destination_tile = tile_at(destination_x, destination_y)
 
+    # move into the tile if it's empty
     if destination_tile.empty?
-      free_tile(moving_object.x, moving_object.y)
-      destination_tile.set_contents(moving_object)
-      moving_object.update_position(destination_x, destination_y)
-      true
-    elsif destination_tile.contents.can_be_pushed_by?(moving_object) && move_object(destination_tile.contents, x_direction, y_direction)
-      free_tile(moving_object.x, moving_object.y)
-      destination_tile.set_contents(moving_object)
-      moving_object.update_position(destination_x, destination_y)
-      true
+      execute_move(moving_object, destination_x, destination_y)
+
+    # try pushing the destination tile's contents out of the way.
+    # this will recursively call try_move.
+    elsif destination_tile.contents.can_be_pushed_by?(moving_object) &&
+          try_move(destination_tile.contents, x_direction, y_direction)
+      execute_move(moving_object, destination_x, destination_y)
+
+    # if the object wants to move straight down, check if the destination tile's contents
+    # are slippery - that means we can try moving to the left or right instead.
+    # try left first
+    elsif y_direction.positive? &&
+          x_direction.zero? &&
+          destination_tile.contents.slippery? &&
+          moving_object.slippable? &&
+          tile_in_bounds?(moving_object.x - 1, moving_object.y + 1) &&
+          tile_at(moving_object.x - 1, moving_object.y + 1).empty? &&
+          tile_in_bounds?(moving_object.x - 1, moving_object.y) &&
+          tile_at(moving_object.x - 1, moving_object.y).empty?
+      execute_move(moving_object, moving_object.x - 1, moving_object.y)
+
+    # then try right
+    elsif y_direction.positive? &&
+          x_direction.zero? &&
+          destination_tile.contents.slippery? &&
+          moving_object.slippable? &&
+          tile_in_bounds?(moving_object.x + 1, moving_object.y + 1) &&
+          tile_at(moving_object.x + 1, moving_object.y + 1).empty? &&
+          tile_in_bounds?(moving_object.x + 1, moving_object.y) &&
+          tile_at(moving_object.x + 1, moving_object.y).empty?
+      execute_move(moving_object, moving_object.x + 1, moving_object.y)
+
     else
       false
     end
+  end
+
+  def execute_move(moving_object, destination_x, destination_y)
+    free_tile(moving_object.x, moving_object.y)
+    tile_at(destination_x, destination_y).set_contents(moving_object)
+    moving_object.update_position(destination_x, destination_y)
+    moving_object.touch_last_move_time
+    true
   end
 
   def set_tile_contents(x, y, contents)
