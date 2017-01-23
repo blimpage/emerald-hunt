@@ -24,7 +24,7 @@ class EmeraldHunt < Gosu::Window
   end
 
   def update
-    BOARD.each_tile do |tile, x_index, y_index|
+    BOARD.each_tile do |tile|
       tile.contents.update
     end
 
@@ -41,15 +41,15 @@ class EmeraldHunt < Gosu::Window
   end
 
   def draw
-    BOARD.each_tile do |tile, x_index, y_index|
-      x_position = TILE_SIZE + x_index * TILE_SIZE
-      y_position = TILE_SIZE + y_index * TILE_SIZE
+    BOARD.each_tile do |tile|
+      x_position = TILE_SIZE + tile.x * TILE_SIZE
+      y_position = TILE_SIZE + tile.y * TILE_SIZE
 
       case tile.object_type
       when :player
         @font.draw("@@@", x_position, y_position, 0, 1, 1, 0xff_22FF22)
       when :null_object
-        @font.draw("#{x_index}, #{y_index}", x_position, y_position, 0, 1, 1, 0xff_444444)
+        @font.draw("#{tile.x}, #{tile.y}", x_position, y_position, 0, 1, 1, 0xff_444444)
       when :wall
         @font.draw("WWW", x_position, y_position, 0, 1, 1, 0xff_0099CC)
       when :rock
@@ -85,10 +85,8 @@ class Board
   end
 
   def each_tile(&block)
-    @matrix.each_with_index do |row, y_index|
-      row.each_with_index do |tile, x_index|
-        yield(tile, x_index, y_index)
-      end
+    @matrix.flatten.each do |tile|
+      yield(tile)
     end
   end
 
