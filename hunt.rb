@@ -28,6 +28,10 @@ class EmeraldHunt < Gosu::Window
       tile.contents.update
     end
 
+    if !@player.activated? && BOARD.everything_still?
+      @player.activate
+    end
+
     if Gosu::button_down?(Gosu::KbD) && Gosu.milliseconds - @last_debug_dump > 1000
       @last_debug_dump = Gosu.milliseconds
       puts "\n\n\n"
@@ -73,6 +77,8 @@ class Board
         end
       end
     end
+
+    @global_last_move_time = 0
   end
 
   def each_tile(&block)
@@ -135,6 +141,7 @@ class Board
     tile_at(destination_x, destination_y).set_contents(moving_object)
     moving_object.update_position(destination_x, destination_y)
     moving_object.touch_last_move_time
+    touch_global_last_move_time
     true
   end
 
@@ -152,6 +159,14 @@ class Board
 
   def tile_in_bounds?(x, y)
     x.between?(0, TILES_X - 1) && y.between?(0, TILES_Y - 1)
+  end
+
+  def touch_global_last_move_time
+    @global_last_move_time = Gosu.milliseconds
+  end
+
+  def everything_still?
+    Gosu.milliseconds - @global_last_move_time > 200
   end
 end
 

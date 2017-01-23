@@ -4,11 +4,9 @@ class Rock < BaseObject
   end
 
   def update
-    moved = if can_move_now?
+    if can_move_now?
       move(0, 1)
     end
-
-    touch_last_move_time if !!moved
   end
 
   def pushers

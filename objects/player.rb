@@ -1,14 +1,11 @@
 class Player < BaseObject
-  def initialize
-    @x = (TILES_X / 2).floor
-    @y = (TILES_Y / 2).floor
-    @last_move_time = Gosu.milliseconds
-
-    BOARD.set_tile_contents(@x, @y, self)
+  def initialize(activate_immediately = false)
+    @activated = false
+    activate if !!activate_immediately
   end
 
   def update
-    moved = if can_move_now?
+    if can_move_now?
       if Gosu::button_down?(Gosu::KbLeft)
         move(-1,  0)
       elsif Gosu::button_down?(Gosu::KbRight)
@@ -19,8 +16,17 @@ class Player < BaseObject
         move( 0,  1)
       end
     end
+  end
 
-    touch_last_move_time if !!moved
+  def activate
+    @x = (TILES_X / 2).floor
+    @y = (TILES_Y / 2).floor
+
+    BOARD.set_tile_contents(@x, @y, self)
+
+    @last_move_time = Gosu.milliseconds
+
+    @activated = true
   end
 
   def object_type
@@ -29,5 +35,9 @@ class Player < BaseObject
 
   def slippable?
     false
+  end
+
+  def activated?
+    !!@activated
   end
 end
