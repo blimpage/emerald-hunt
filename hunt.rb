@@ -29,7 +29,8 @@ class EmeraldHunt < Gosu::Window
     end
 
     if !@player.activated? && BOARD.everything_still?
-      @player.activate
+      player_position = BOARD.random_blank_tile
+      @player.activate_at(player_position.x, player_position.y)
     end
 
     if Gosu::button_down?(Gosu::KbD) && Gosu.milliseconds - @last_debug_dump > 1000
@@ -67,14 +68,16 @@ class Board
 
     @matrix = Array.new(TILES_Y) do |y_index|
       Array.new(TILES_X) do |x_index|
-        case rand(100)
+        contents = case rand(100)
         when (0..20)
-          Tile.new(Wall.new(x_index, y_index))
+          Wall.new(x_index, y_index)
         when (21..40)
-          Tile.new(Rock.new(x_index, y_index))
+          Rock.new(x_index, y_index)
         else
-          Tile.new(@null_object)
+          @null_object
         end
+
+        Tile.new(x_index, y_index, contents)
       end
     end
 
@@ -161,6 +164,10 @@ class Board
     x.between?(0, TILES_X - 1) && y.between?(0, TILES_Y - 1)
   end
 
+  def random_blank_tile
+    @matrix.flatten.select(&:empty?).sample
+  end
+
   def touch_global_last_move_time
     @global_last_move_time = Gosu.milliseconds
   end
@@ -172,9 +179,11 @@ end
 
 
 class Tile
-  attr_reader :contents
+  attr_reader :x, :y, :contents
 
-  def initialize(contents)
+  def initialize(x, y, contents)
+    @x = x
+    @y = y
     @contents = contents
   end
 

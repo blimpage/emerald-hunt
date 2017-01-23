@@ -18,9 +18,9 @@ class Player < BaseObject
     end
   end
 
-  def activate
-    @x = (TILES_X / 2).floor
-    @y = (TILES_Y / 2).floor
+  def activate_at(x, y)
+    @x = x
+    @y = y
 
     BOARD.set_tile_contents(@x, @y, self)
 
