@@ -53,6 +53,11 @@ class BaseObject
     crushers.include?(object.object_type)
   end
 
+  def get_crushed_by(object)
+    # optional callback for the object to do anything it needs to in its
+    # last few precious seconds of life
+  end
+
   def touch_last_move_time
     @last_move_time = Gosu.milliseconds
   end

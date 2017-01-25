@@ -106,6 +106,11 @@ class Board
     if destination_tile.empty?
       execute_move(moving_object, destination_x, destination_y)
 
+    # try crushing the destination tile's contents.
+    elsif destination_tile.contents.can_be_crushed_by?(moving_object)
+      destination_tile.contents.get_crushed_by(moving_object)
+      execute_move(moving_object, destination_x, destination_y)
+
     # try pushing the destination tile's contents out of the way.
     # this will recursively call try_move.
     elsif destination_tile.contents.can_be_pushed_by?(moving_object) &&
