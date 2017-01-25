@@ -16,7 +16,7 @@ GAME_STATE = {
 
 class EmeraldHunt < Gosu::Window
   def initialize
-    super(TILES_X * TILE_SIZE + TILE_SIZE * 2, TILES_Y * TILE_SIZE + TILE_SIZE * 2)
+    super(TILES_X * TILE_SIZE + TILE_SIZE * 2, TILES_Y * TILE_SIZE + TILE_SIZE * 2, true)
 
     self.caption = "Emerald Hunt"
 
