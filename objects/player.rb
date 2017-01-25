@@ -1,7 +1,7 @@
 class Player < BaseObject
   def initialize(activate_immediately = false)
     @activated = false
-    @sprite = Gosu::Image.new(sprite_filename)
+    @sprite = Gosu::Image.new(sprite_filename, retro: true)
     activate if activate_immediately
   end
 

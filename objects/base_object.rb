@@ -7,7 +7,7 @@ class BaseObject
     @x = x
     @y = y
     @in_motion = false
-    @sprite = Gosu::Image.new(sprite_filename)
+    @sprite = Gosu::Image.new(sprite_filename, retro: true)
     touch_last_move_time
   end
 
