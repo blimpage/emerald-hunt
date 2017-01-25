@@ -9,7 +9,8 @@ Dir[File.join(__dir__, "objects", "*.rb")].each { |file| require file }
 TILES_X, TILES_Y = 40, 20
 TILE_SIZE = 40
 GAME_STATE = {
-  game_over: false
+  game_over: false,
+  score: 0
 }
 
 
@@ -68,6 +69,8 @@ class EmeraldHunt < Gosu::Window
         @font.draw("???", x_position, y_position, 0, 1, 1, 0xff_ff0000)
       end
     end
+
+    @font.draw("SCORE: #{GAME_STATE[:score]}", TILE_SIZE, TILE_SIZE * 0.4, 0)
 
     if GAME_STATE[:game_over]
       x = (TILES_X * TILE_SIZE + TILE_SIZE * 2) / 2

@@ -13,11 +13,17 @@ class Emerald < BaseObject
     end
   end
 
-  def pushers
+  def crushers
     [:player]
   end
 
   def slippery?
     true
+  end
+
+  def get_crushed_by(object)
+    if object.object_type == :player
+      GAME_STATE[:score] = GAME_STATE[:score] + 1
+    end
   end
 end
