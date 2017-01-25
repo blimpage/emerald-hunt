@@ -6,7 +6,7 @@ require "gosu"
 Dir[File.join(__dir__, "objects", "*.rb")].each { |file| require file }
 
 
-TILES_X, TILES_Y = 20, 15
+TILES_X, TILES_Y = 40, 20
 TILE_SIZE = 40
 GAME_STATE = {
   game_over: false
