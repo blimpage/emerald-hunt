@@ -65,6 +65,8 @@ class EmeraldHunt < Gosu::Window
         @font.draw(string, x_position, y_position, 0, 1, 1, 0xff_AAAAAA)
       when :emerald
         @font.draw("EEE", x_position, y_position, 0, 1, 1, 0xff_5dfa5a)
+      when :diamond
+        @font.draw("DDD", x_position, y_position, 0, 1, 1, 0xff_5456fa)
       else
         @font.draw("???", x_position, y_position, 0, 1, 1, 0xff_ff0000)
       end
@@ -88,14 +90,16 @@ class Board
     @matrix = Array.new(TILES_Y) do |y_index|
       Array.new(TILES_X) do |x_index|
         contents = case rand(100)
-        when (0..15)
+        when (0..12)
           Brick.new(x_index, y_index)
-        when (16..30)
+        when (13..24)
           Dirt.new(x_index, y_index)
-        when (31..45)
+        when (25..36)
           Rock.new(x_index, y_index)
-        when (46..70)
+        when (37..60)
           Emerald.new(x_index, y_index)
+        when (61..68)
+          Diamond.new(x_index, y_index)
         else
           @null_object
         end
