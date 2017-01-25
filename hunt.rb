@@ -50,8 +50,8 @@ class EmeraldHunt < Gosu::Window
         @font.draw("@@@", x_position, y_position, 0, 1, 1, 0xff_22FF22)
       when :null_object
         @font.draw("#{tile.x}, #{tile.y}", x_position, y_position, 0, 1, 1, 0xff_444444)
-      when :wall
-        @font.draw("WWW", x_position, y_position, 0, 1, 1, 0xff_0099CC)
+      when :brick
+        @font.draw("BBB", x_position, y_position, 0, 1, 1, 0xff_a20406)
       when :rock
         @font.draw("RRR", x_position, y_position, 0, 1, 1, 0xff_AAAAAA)
       else
@@ -70,7 +70,7 @@ class Board
       Array.new(TILES_X) do |x_index|
         contents = case rand(100)
         when (0..20)
-          Wall.new(x_index, y_index)
+          Brick.new(x_index, y_index)
         when (21..40)
           Rock.new(x_index, y_index)
         else
