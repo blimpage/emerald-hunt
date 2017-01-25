@@ -43,7 +43,7 @@ class Player < BaseObject
   end
 
   def crushers
-    [:rock]
+    [:rock, :emerald]
   end
 
   def can_be_crushed_by?(object)
