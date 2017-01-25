@@ -1,11 +1,12 @@
 class BaseObject
   MINIMUM_MOVE_TIME = 150
 
-  attr_reader :x, :y
+  attr_reader :x, :y, :in_motion
 
   def initialize(x, y)
     @x = x
     @y = y
+    @in_motion = false
     touch_last_move_time
   end
 

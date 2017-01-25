@@ -5,7 +5,11 @@ class Rock < BaseObject
 
   def update
     if can_move_now?
-      move(0, 1)
+      if move(0, 1)
+        @in_motion = true
+      else
+        @in_motion = false
+      end
     end
   end
 

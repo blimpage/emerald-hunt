@@ -55,7 +55,8 @@ class EmeraldHunt < Gosu::Window
       when :dirt
         @font.draw("DDD", x_position, y_position, 0, 1, 1, 0xff_ab5405)
       when :rock
-        @font.draw("RRR", x_position, y_position, 0, 1, 1, 0xff_AAAAAA)
+        string = tile.contents.in_motion ? "⬇⬇⬇" : "RRR"
+        @font.draw(string, x_position, y_position, 0, 1, 1, 0xff_AAAAAA)
       else
         @font.draw("???", x_position, y_position, 0, 1, 1, 0xff_ff0000)
       end
