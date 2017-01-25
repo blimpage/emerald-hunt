@@ -62,6 +62,8 @@ class EmeraldHunt < Gosu::Window
       when :rock
         string = tile.contents.in_motion ? "⬇⬇⬇" : "RRR"
         @font.draw(string, x_position, y_position, 0, 1, 1, 0xff_AAAAAA)
+      when :emerald
+        @font.draw("EEE", x_position, y_position, 0, 1, 1, 0xff_5dfa5a)
       else
         @font.draw("???", x_position, y_position, 0, 1, 1, 0xff_ff0000)
       end
@@ -89,6 +91,8 @@ class Board
           Dirt.new(x_index, y_index)
         when (31..45)
           Rock.new(x_index, y_index)
+        when (46..70)
+          Emerald.new(x_index, y_index)
         else
           @null_object
         end
