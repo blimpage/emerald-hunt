@@ -50,6 +50,10 @@ class Player < BaseObject
     crushers.include?(object.object_type) && object.in_motion
   end
 
+  def get_crushed_by(object)
+    GAME_STATE[:game_over] = true
+  end
+
   def activated?
     !!@activated
   end

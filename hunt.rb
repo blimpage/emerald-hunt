@@ -8,6 +8,9 @@ Dir[File.join(__dir__, "objects", "*.rb")].each { |file| require file }
 
 TILES_X, TILES_Y = 20, 15
 TILE_SIZE = 40
+GAME_STATE = {
+  game_over: false
+}
 
 
 class EmeraldHunt < Gosu::Window
@@ -24,13 +27,15 @@ class EmeraldHunt < Gosu::Window
   end
 
   def update
-    BOARD.each_tile do |tile|
-      tile.contents.update
-    end
+    unless GAME_STATE[:game_over]
+      BOARD.each_tile do |tile|
+        tile.contents.update
+      end
 
-    if !@player.activated? && BOARD.everything_still?
-      player_position = BOARD.random_blank_tile
-      @player.activate_at(player_position.x, player_position.y)
+      if !@player.activated? && BOARD.everything_still?
+        player_position = BOARD.random_blank_tile
+        @player.activate_at(player_position.x, player_position.y)
+      end
     end
 
     if Gosu::button_down?(Gosu::KbD) && Gosu.milliseconds - @last_debug_dump > 1000
@@ -60,6 +65,12 @@ class EmeraldHunt < Gosu::Window
       else
         @font.draw("???", x_position, y_position, 0, 1, 1, 0xff_ff0000)
       end
+    end
+
+    if GAME_STATE[:game_over]
+      x = (TILES_X * TILE_SIZE + TILE_SIZE * 2) / 2
+      y = (TILES_Y * TILE_SIZE + TILE_SIZE * 2) / 2
+      @font.draw_rel("GAME OVER", x, y, 99, 0.5, 0.5, 10, 10, 0xff_ff0000)
     end
   end
 end
