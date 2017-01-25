@@ -132,7 +132,8 @@ class Board
 
     # try pushing the destination tile's contents out of the way.
     # this will recursively call try_move.
-    elsif destination_tile.contents.can_be_pushed_by?(moving_object) &&
+    elsif y_direction >= 0 && # objects cannot be pushed upwards.
+          destination_tile.contents.can_be_pushed_by?(moving_object) &&
           try_move(destination_tile.contents, x_direction, y_direction)
       execute_move(moving_object, destination_x, destination_y)
 
