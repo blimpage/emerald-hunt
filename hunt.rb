@@ -72,15 +72,15 @@ class Board
     @matrix = Array.new(TILES_Y) do |y_index|
       Array.new(TILES_X) do |x_index|
         contents = case rand(100)
-        when (0..12)
+        when (0..15)
           Brick.new(x_index, y_index)
-        when (13..24)
+        when (16..35)
           Dirt.new(x_index, y_index)
-        when (25..36)
+        when (36..55)
           Rock.new(x_index, y_index)
-        when (37..60)
+        when (56..72)
           Emerald.new(x_index, y_index)
-        when (61..68)
+        when (73..79)
           Diamond.new(x_index, y_index)
         else
           @null_object
