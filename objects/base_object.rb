@@ -1,19 +1,28 @@
 class BaseObject
   MINIMUM_MOVE_TIME = 150
 
-  attr_reader :x, :y, :in_motion
+  attr_reader :x, :y, :in_motion, :sprite
 
   def initialize(x, y)
     @x = x
     @y = y
     @in_motion = false
+    @sprite = Gosu::Image.new(sprite_filename)
     touch_last_move_time
   end
 
   def update
   end
 
+  def draw(x, y)
+    sprite.draw(x, y, 0)
+  end
+
   def object_type
+    raise NotImplementedError
+  end
+
+  def sprite_filename
     raise NotImplementedError
   end
 

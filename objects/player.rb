@@ -1,6 +1,7 @@
 class Player < BaseObject
   def initialize(activate_immediately = false)
     @activated = false
+    @sprite = Gosu::Image.new(sprite_filename)
     activate if activate_immediately
   end
 
@@ -36,6 +37,10 @@ class Player < BaseObject
 
   def object_type
     :player
+  end
+
+  def sprite_filename
+    "./sprites/player.png"
   end
 
   def slippable?

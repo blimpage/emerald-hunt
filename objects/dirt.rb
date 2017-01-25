@@ -3,6 +3,10 @@ class Dirt < BaseObject
     :dirt
   end
 
+  def sprite_filename
+    "./sprites/dirt.png"
+  end
+
   def crushers
     [:player]
   end

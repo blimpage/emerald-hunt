@@ -3,6 +3,10 @@ class Diamond < BaseObject
     :diamond
   end
 
+  def sprite_filename
+    "./sprites/diamond.png"
+  end
+
   def update
     if can_move_now?
       if move(0, 1)

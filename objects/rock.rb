@@ -3,6 +3,10 @@ class Rock < BaseObject
     :rock
   end
 
+  def sprite_filename
+    "./sprites/rock.png"
+  end
+
   def update
     if can_move_now?
       if move(0, 1)

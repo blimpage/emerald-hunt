@@ -7,7 +7,7 @@ Dir[File.join(__dir__, "objects", "*.rb")].each { |file| require file }
 
 
 TILES_X, TILES_Y = 40, 20
-TILE_SIZE = 40
+TILE_SIZE = 16
 GAME_STATE = {
   game_over: false,
   score: 0
@@ -51,25 +51,7 @@ class EmeraldHunt < Gosu::Window
       x_position = TILE_SIZE + tile.x * TILE_SIZE
       y_position = TILE_SIZE + tile.y * TILE_SIZE
 
-      case tile.object_type
-      when :player
-        @font.draw("@@@", x_position, y_position, 0, 1, 1, 0xff_f7f69c)
-      when :null_object
-        @font.draw("#{tile.x}, #{tile.y}", x_position, y_position, 0, 1, 1, 0xff_444444)
-      when :brick
-        @font.draw("BBB", x_position, y_position, 0, 1, 1, 0xff_a20406)
-      when :dirt
-        @font.draw("DDD", x_position, y_position, 0, 1, 1, 0xff_ab5405)
-      when :rock
-        string = tile.contents.in_motion ? "⬇⬇⬇" : "RRR"
-        @font.draw(string, x_position, y_position, 0, 1, 1, 0xff_AAAAAA)
-      when :emerald
-        @font.draw("EEE", x_position, y_position, 0, 1, 1, 0xff_5dfa5a)
-      when :diamond
-        @font.draw("DDD", x_position, y_position, 0, 1, 1, 0xff_5456fa)
-      else
-        @font.draw("???", x_position, y_position, 0, 1, 1, 0xff_ff0000)
-      end
+      tile.contents.draw(x_position, y_position) unless tile.empty?
     end
 
     @font.draw("SCORE: #{GAME_STATE[:score]}", TILE_SIZE, TILE_SIZE * 0.4, 0)

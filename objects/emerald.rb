@@ -3,6 +3,10 @@ class Emerald < BaseObject
     :emerald
   end
 
+  def sprite_filename
+    "./sprites/emerald.png"
+  end
+
   def update
     if can_move_now?
       if move(0, 1)
