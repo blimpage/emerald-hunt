@@ -29,6 +29,10 @@ class BaseObject
     pushers.include?(object.object_type)
   end
 
+  def can_be_crushed_by?(object)
+    crushers.include?(object.object_type)
+  end
+
   def slippable?
     # will this object slip off a slippery object if it lands on the slippery object from above?
     true
@@ -40,6 +44,12 @@ class BaseObject
   end
 
   def pushers
+    # object_types that can push this object around
+    []
+  end
+
+  def crushers
+    # object_types that can crush and destroy this object
     []
   end
 
