@@ -52,7 +52,7 @@ class EmeraldHunt < Gosu::Window
 
       case tile.object_type
       when :player
-        @font.draw("@@@", x_position, y_position, 0, 1, 1, 0xff_22FF22)
+        @font.draw("@@@", x_position, y_position, 0, 1, 1, 0xff_f7f69c)
       when :null_object
         @font.draw("#{tile.x}, #{tile.y}", x_position, y_position, 0, 1, 1, 0xff_444444)
       when :brick
