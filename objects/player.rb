@@ -1,7 +1,11 @@
 class Player < BaseObject
+  attr_reader :grenade_count
+
   def initialize(activate_immediately = false)
     @activated = false
     @sprite = Gosu::Image.new(sprite_filename, retro: true)
+    @grenade_count = 0
+
     activate if activate_immediately
   end
 
@@ -56,6 +60,10 @@ class Player < BaseObject
 
   def get_crushed_by(object)
     GAME_STATE[:game_over] = true
+  end
+
+  def collect_grenade
+    @grenade_count += 1
   end
 
   def activated?

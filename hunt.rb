@@ -54,7 +54,7 @@ class EmeraldHunt < Gosu::Window
       tile.contents.draw(x_position, y_position) unless tile.empty?
     end
 
-    @font.draw("SCORE: #{GAME_STATE[:score]}", TILE_SIZE, TILE_SIZE * 0.4, 0)
+    @font.draw("SCORE: #{GAME_STATE[:score]} | GRENADES: #{@player.grenade_count}", TILE_SIZE, TILE_SIZE * 0.4, 0)
 
     if GAME_STATE[:game_over]
       x = (TILES_X * TILE_SIZE + TILE_SIZE * 2) / 2
@@ -84,6 +84,8 @@ class Board
           Emerald.new(x_index, y_index)
         when (73..79)
           Diamond.new(x_index, y_index)
+        when (80..82)
+          Grenade.new(x_index, y_index)
         else
           @null_object
         end
