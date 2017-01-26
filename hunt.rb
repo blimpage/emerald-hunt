@@ -210,11 +210,8 @@ class Tile
     @contents.update
 
     if secondary_contents?
-      if @secondary_contents.expired?
-        set_secondary_contents(NULL_OBJECT)
-      else
-        @secondary_contents.update
-      end
+      @secondary_contents.update
+      set_secondary_contents(NULL_OBJECT) if @secondary_contents.expired?
     end
   end
 
