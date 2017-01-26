@@ -116,7 +116,7 @@ class Board
       execute_move(moving_object, destination_x, destination_y)
 
     # try crushing the destination tile's contents.
-    elsif destination_tile.contents.can_be_crushed_by?(moving_object)
+    elsif destination_tile.contents.can_be_crushed_by?(moving_object, x_direction, y_direction)
       destination_tile.contents.get_crushed_by(moving_object)
       execute_move(moving_object, destination_x, destination_y)
 

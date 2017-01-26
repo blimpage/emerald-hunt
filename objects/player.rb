@@ -54,7 +54,7 @@ class Player < BaseObject
     [:rock, :emerald, :diamond]
   end
 
-  def can_be_crushed_by?(object)
+  def can_be_crushed_by?(object, x_direction, y_direction)
     crushers.include?(object.object_type) && object.in_motion
   end
 

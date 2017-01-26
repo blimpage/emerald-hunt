@@ -59,7 +59,7 @@ class BaseObject
     pushers.include?(object.object_type)
   end
 
-  def can_be_crushed_by?(object)
+  def can_be_crushed_by?(object, x_direction, y_direction)
     crushers.include?(object.object_type)
   end
 

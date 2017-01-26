@@ -21,6 +21,15 @@ class Diamond < BaseObject
     [:player, :rock, :emerald]
   end
 
+  def can_be_crushed_by?(object, x_direction, y_direction)
+    # only be crushed by a rock if the rock is falling from above
+    if object.object_type == :rock && y_direction <= 0
+      false
+    else
+      super
+    end
+  end
+
   def slippery?
     true
   end
