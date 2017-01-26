@@ -25,8 +25,7 @@ class Player < BaseObject
   end
 
   def activate_at(x, y)
-    @x = x
-    @y = y
+    update_position(x, y)
 
     BOARD.set_tile_contents(@x, @y, self)
 
@@ -48,7 +47,7 @@ class Player < BaseObject
   end
 
   def crushers
-    [:rock, :emerald]
+    [:rock, :emerald, :diamond]
   end
 
   def can_be_crushed_by?(object)
