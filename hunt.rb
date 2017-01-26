@@ -12,6 +12,7 @@ GAME_STATE = {
   game_over: false,
   score: 0
 }
+NULL_OBJECT = NullObject.new
 
 
 class EmeraldHunt < Gosu::Window
@@ -30,7 +31,7 @@ class EmeraldHunt < Gosu::Window
   def update
     unless GAME_STATE[:game_over]
       BOARD.each_tile do |tile|
-        tile.contents.update
+        tile.update
       end
 
       if !@player.activated? && BOARD.everything_still?
@@ -51,7 +52,7 @@ class EmeraldHunt < Gosu::Window
       x_position = TILE_SIZE + tile.x * TILE_SIZE
       y_position = TILE_SIZE + tile.y * TILE_SIZE
 
-      tile.contents.draw(x_position, y_position) unless tile.empty?
+      tile.draw(x_position, y_position)
     end
 
     @font.draw("SCORE: #{GAME_STATE[:score]} | GRENADES: #{@player.grenade_count}", TILE_SIZE, TILE_SIZE * 0.4, 0)
@@ -67,8 +68,6 @@ end
 
 class Board
   def initialize
-    @null_object = NullObject.new
-
     @matrix = Array.new(TILES_Y) do |y_index|
       Array.new(TILES_X) do |x_index|
         contents = case rand(100)
@@ -87,7 +86,7 @@ class Board
         when (80..82)
           Grenade.new(x_index, y_index)
         else
-          @null_object
+          NULL_OBJECT
         end
 
         Tile.new(x_index, y_index, contents)
@@ -170,7 +169,7 @@ class Board
   end
 
   def free_tile(x, y)
-    tile_at(x, y).set_contents(@null_object)
+    tile_at(x, y).set_contents(NULL_OBJECT)
   end
 
   def tile_at(x, y)
@@ -196,16 +195,43 @@ end
 
 
 class Tile
-  attr_reader :x, :y, :contents
+  attr_reader :x, :y, :contents, :secondary_contents
 
   def initialize(x, y, contents)
     @x = x
     @y = y
     @contents = contents
+    @secondary_contents = NULL_OBJECT
+    # secondary_contents is used for objects that need to temporarily occupy
+    # the same tile as another object, like live grenades. it's dumb.
+  end
+
+  def update
+    @contents.update
+
+    if secondary_contents?
+      if @secondary_contents.expired?
+        set_secondary_contents(NULL_OBJECT)
+      else
+        @secondary_contents.update
+      end
+    end
+  end
+
+  def draw(x_position, y_position)
+    if object_type != :null_object
+      @contents.draw(x_position, y_position)
+    elsif secondary_contents?
+      @secondary_contents.draw(x_position, y_position)
+    end
   end
 
   def set_contents(contents)
     @contents = contents
+  end
+
+  def set_secondary_contents(secondary_contents)
+    @secondary_contents = secondary_contents
   end
 
   def object_type
@@ -213,7 +239,11 @@ class Tile
   end
 
   def empty?
-    object_type == :null_object
+    object_type == :null_object && @secondary_contents.object_type == :null_object
+  end
+
+  def secondary_contents?
+    @secondary_contents.object_type != :null_object
   end
 end
 

@@ -25,6 +25,10 @@ class Player < BaseObject
       else
         false
       end
+
+      if Gosu::button_down?(Gosu::KbSpace) && can_drop_grenade_now?
+        drop_grenade
+      end
     end
   end
 
@@ -34,8 +38,23 @@ class Player < BaseObject
     BOARD.set_tile_contents(@x, @y, self)
 
     @last_move_time = Gosu.milliseconds
+    @last_grenade_drop_time = Gosu.milliseconds
 
     @activated = true
+  end
+
+  def drop_grenade
+    @grenade_count -= 1
+    @last_grenade_drop_time = Gosu.milliseconds
+    BOARD.tile_at(@x, @y).set_secondary_contents(LiveGrenade.new(@x, @y))
+  end
+
+  def can_drop_grenade_now?
+    @grenade_count.positive? &&
+      @in_motion == false &&
+      can_move_now? &&
+      Gosu.milliseconds - @last_grenade_drop_time >= MINIMUM_MOVE_TIME &&
+      BOARD.tile_at(@x, @y).secondary_contents? == false
   end
 
   def object_type
