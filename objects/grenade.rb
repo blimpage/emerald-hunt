@@ -16,4 +16,9 @@ class Grenade < BaseObject
       object.collect_grenade
     end
   end
+
+  def explode
+    # exploding a grenade triggers another explosion! BOOOM
+    BOARD.trigger_explosion_at(@x, @y)
+  end
 end

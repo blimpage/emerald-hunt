@@ -174,10 +174,17 @@ class Board
       end
     end
 
-    # also explode the contents of the origin tile, without putting an
-    # Explosion there. there shouldn't be anything there, but if the player
-    # is there, they should act as if they were exploded and end the game.
-    tile_at(x, y).contents.explode
+    # we also need to deal with the contents of the tile where the explosion started.
+    origin_tile = tile_at(x, y)
+    unless origin_tile.empty?
+      if origin_tile.object_type == :player
+        # if the player's there, kill 'em.
+        origin_tile.contents.explode
+      else
+        # if anything else is there, just delete it.
+        free_tile(x, y)
+      end
+    end
   end
 
   def set_tile_contents(x, y, contents)
