@@ -151,10 +151,7 @@ class Board
 
   def trigger_explosion_at(x, y)
     neighbouring_tiles_of(x, y).each do |tile|
-      if tile.contents.flammable?
-        tile.contents.explode
-        tile.set_contents(Explosion.new(tile.x, tile.y))
-      end
+      tile.mark_for_explosion
     end
 
     # we also need to deal with the contents of the tile where the explosion started.
@@ -162,7 +159,7 @@ class Board
     unless origin_tile.empty?
       if origin_tile.object_type == :player
         # if the player's there, kill 'em.
-        origin_tile.contents.explode
+        origin_tile.mark_for_explosion
       else
         # if anything else is there, just delete it.
         free_tile(x, y)
@@ -225,9 +222,16 @@ class Tile
     @secondary_contents = NULL_OBJECT
     # secondary_contents is used for objects that need to temporarily occupy
     # the same tile as another object, like live grenades. it's dumb.
+    @about_to_explode = false
   end
 
   def update
+    if @about_to_explode
+      @contents.explode
+      @contents = Explosion.new(@x, @y)
+      @about_to_explode = false
+    end
+
     @contents.update
 
     if secondary_contents?
@@ -262,6 +266,12 @@ class Tile
 
   def secondary_contents?
     @secondary_contents.object_type != :null_object
+  end
+
+  def mark_for_explosion
+    if @contents.flammable?
+      @about_to_explode = true
+    end
   end
 end
 
