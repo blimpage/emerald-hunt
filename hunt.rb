@@ -164,6 +164,20 @@ class Board
     true
   end
 
+  def trigger_explosion_at(x, y)
+    neighbouring_tiles_of(x, y).each do |tile|
+      if tile.contents.flammable?
+        tile.contents.explode
+        tile.set_contents(Explosion.new(tile.x, tile.y))
+      end
+    end
+
+    # also explode the contents of the origin tile, without putting an
+    # Explosion there. there shouldn't be anything there, but if the player
+    # is there, they should act as if they were exploded and end the game.
+    tile_at(x, y).contents.explode
+  end
+
   def set_tile_contents(x, y, contents)
     tile_at(x, y).set_contents(contents)
   end
@@ -174,6 +188,21 @@ class Board
 
   def tile_at(x, y)
     @matrix[y][x]
+  end
+
+  def neighbouring_tiles_of(x, y)
+    # return all of the tiles surrounding a coordinate
+    [
+      # wow this is like a visual representation of the coordinates we're setting up.
+      # that's deep, man.
+      [x - 1, y - 1], [x    , y - 1], [x + 1, y - 1],
+      [x - 1, y    ],                 [x + 1, y    ],
+      [x - 1, y + 1], [x    , y + 1], [x + 1, y + 1]
+    ].select { |coordinate_set|
+      tile_in_bounds?(*coordinate_set)
+    }.map { |coordinate_set|
+      tile_at(*coordinate_set)
+    }
   end
 
   def tile_in_bounds?(x, y)

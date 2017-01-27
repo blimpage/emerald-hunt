@@ -81,6 +81,10 @@ class Player < BaseObject
     GAME_STATE[:game_over] = true
   end
 
+  def explode
+    GAME_STATE[:game_over] = true
+  end
+
   def collect_grenade
     @grenade_count += 1
   end

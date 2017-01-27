@@ -6,4 +6,8 @@ class Brick < BaseObject
   def sprite_filename
     "./sprites/brick.png"
   end
+
+  def flammable?
+    false
+  end
 end

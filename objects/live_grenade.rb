@@ -1,9 +1,9 @@
 class LiveGrenade < BaseObject
-  FUSE_TIME = 500
+  FUSE_DURATION = 700
 
   def initialize(*args)
-    @detonation_time = Gosu.milliseconds + FUSE_TIME
-    @expired = false
+    @detonation_time = Gosu.milliseconds + FUSE_DURATION
+    @exploded = false
     super
   end
 
@@ -12,16 +12,16 @@ class LiveGrenade < BaseObject
   end
 
   def explode
-    puts 'boom'
-    @expired = true
+    @exploded = true
+    BOARD.trigger_explosion_at(@x, @y)
   end
 
   def time_to_explode?
-    Gosu.milliseconds >= @detonation_time
+    Gosu.milliseconds >= @detonation_time && !@exploded
   end
 
   def expired?
-    @expired
+    @exploded
   end
 
   def object_type

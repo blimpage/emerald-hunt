@@ -45,6 +45,11 @@ class BaseObject
     false
   end
 
+  def flammable?
+    # will this object be destroyed if it's caught in an explosion?
+    true
+  end
+
   def pushers
     # object_types that can push this object around
     []
@@ -64,6 +69,11 @@ class BaseObject
   end
 
   def get_crushed_by(object)
+    # optional callback for the object to do anything it needs to in its
+    # last few precious seconds of life
+  end
+
+  def explode
     # optional callback for the object to do anything it needs to in its
     # last few precious seconds of life
   end
