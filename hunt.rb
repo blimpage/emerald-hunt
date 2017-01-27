@@ -5,6 +5,7 @@ require "gosu"
 
 Dir[File.join(__dir__, "objects", "*.rb")].each { |file| require file }
 
+require "./random_object_generator"
 
 TILES_X, TILES_Y = 40, 20
 TILE_SIZE = 16
@@ -70,32 +71,14 @@ end
 
 class Board
   def initialize
-    @matrix = Array.new(TILES_Y) do |y_index|
-      Array.new(TILES_X) do |x_index|
-        contents = case rand(100)
-        when (0..9)
-          Brick.new(x_index, y_index)
-        when (10..15)
-          Stone.new(x_index, y_index)
-        when (16..35)
-          Dirt.new(x_index, y_index)
-        when (36..55)
-          Rock.new(x_index, y_index)
-        when (56..72)
-          Emerald.new(x_index, y_index)
-        when (73..79)
-          Diamond.new(x_index, y_index)
-        when (80..82)
-          Grenade.new(x_index, y_index)
-        else
-          NULL_OBJECT
-        end
+    @random_object_generator = RandomObjectGenerator.new
+    @global_last_move_time = 0
 
-        Tile.new(x_index, y_index, contents)
+    @matrix = Array.new(TILES_Y) do |y|
+      Array.new(TILES_X) do |x|
+        Tile.new(x, y, @random_object_generator.for_tile(x, y))
       end
     end
-
-    @global_last_move_time = 0
   end
 
   def each_tile(&block)
