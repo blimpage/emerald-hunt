@@ -17,7 +17,7 @@ NULL_OBJECT = NullObject.new
 
 class EmeraldHunt < Gosu::Window
   def initialize
-    super(TILES_X * TILE_SIZE + TILE_SIZE * 2, TILES_Y * TILE_SIZE + TILE_SIZE * 2, true)
+    super((TILES_X * TILE_SIZE + TILE_SIZE * 2) * 2, (TILES_Y * TILE_SIZE + TILE_SIZE * 2) * 2)
 
     self.caption = "Emerald Hunt"
 
@@ -48,19 +48,21 @@ class EmeraldHunt < Gosu::Window
   end
 
   def draw
-    BOARD.each_tile do |tile|
-      x_position = TILE_SIZE + tile.x * TILE_SIZE
-      y_position = TILE_SIZE + tile.y * TILE_SIZE
+    self.scale(2) do
+      BOARD.each_tile do |tile|
+        x_position = TILE_SIZE + tile.x * TILE_SIZE
+        y_position = TILE_SIZE + tile.y * TILE_SIZE
 
-      tile.draw(x_position, y_position)
-    end
+        tile.draw(x_position, y_position)
+      end
 
-    @font.draw("SCORE: #{GAME_STATE[:score]} | GRENADES: #{@player.grenade_count}", TILE_SIZE, TILE_SIZE * 0.4, 0)
+      @font.draw("SCORE: #{GAME_STATE[:score]} | GRENADES: #{@player.grenade_count}", TILE_SIZE, TILE_SIZE * 0.4, 0)
 
-    if GAME_STATE[:game_over]
-      x = (TILES_X * TILE_SIZE + TILE_SIZE * 2) / 2
-      y = (TILES_Y * TILE_SIZE + TILE_SIZE * 2) / 2
-      @font.draw_rel("GAME OVER", x, y, 99, 0.5, 0.5, 10, 10, 0xff_ff0000)
+      if GAME_STATE[:game_over]
+        x = (TILES_X * TILE_SIZE + TILE_SIZE * 2) / 2
+        y = (TILES_Y * TILE_SIZE + TILE_SIZE * 2) / 2
+        @font.draw_rel("GAME OVER", x, y, 99, 0.5, 0.5, 10, 10, 0xff_ff0000)
+      end
     end
   end
 end
