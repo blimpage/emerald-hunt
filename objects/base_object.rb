@@ -50,6 +50,11 @@ class BaseObject
     true
   end
 
+  def explode_on_contact?
+    # will this object explode if another object falls on it, or if it falls on another object?
+    false
+  end
+
   def pushers
     # object_types that can push this object around
     []

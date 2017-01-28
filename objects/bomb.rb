@@ -17,6 +17,10 @@ class Bomb < BaseObject
     end
   end
 
+  def explode_on_contact?
+    true
+  end
+
   def pushers
     [:player]
   end

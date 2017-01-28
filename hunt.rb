@@ -135,6 +135,22 @@ class Board
           tile_at(moving_object.x + 1, moving_object.y).empty?
       execute_move(moving_object, moving_object.x + 1, moving_object.y)
 
+    # if the object is falling on top of something and it should explode on contact,
+    # explode it
+    elsif y_direction.positive? &&
+          x_direction.zero? &&
+          moving_object.explode_on_contact?
+      moving_object.explode
+      false
+
+    # or if the object is falling on top of something else that should explode on contact,
+    # explode the other thing
+    elsif y_direction.positive? &&
+          x_direction.zero? &&
+          destination_tile.contents.explode_on_contact?
+      destination_tile.contents.explode
+      false
+
     else
       false
     end
