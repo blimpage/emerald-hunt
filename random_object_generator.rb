@@ -19,6 +19,7 @@ class RandomObjectGenerator
       { class_name: Emerald,    probability: 16 },
       { class_name: Diamond,    probability: 6  },
       { class_name: Grenade,    probability: 2  },
+      { class_name: Bomb,       probability: 2  },
       { class_name: NullObject, probability: 20 }
     ]
   end
