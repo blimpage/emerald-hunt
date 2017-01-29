@@ -11,6 +11,8 @@ require "./target_score_calculator"
 TILES_X, TILES_Y = 40, 20
 TILE_SIZE = 16
 GAME_STATE = {
+  current_mode: :menu,
+  tiles_generated: false,
   game_won: false,
   game_over: false,
   target_score: 50,
@@ -28,54 +30,78 @@ class EmeraldHunt < Gosu::Window
     @player = Player.new
 
     @font = Gosu::Font.new(10)
+    @big_font = Gosu::Font.new(100)
 
     @last_debug_dump = Gosu.milliseconds
   end
 
   def update
-    unless GAME_STATE[:game_over] || GAME_STATE[:game_won]
-      BOARD.each_tile_in_reverse do |tile|
-        tile.update
+    case GAME_STATE[:current_mode]
+    when :menu
+      if Gosu::button_down?(Gosu::KbReturn)
+        GAME_STATE[:current_mode] = :gameplay
       end
 
-      if !@player.activated? && BOARD.everything_still?
-        player_position = BOARD.random_blank_tile
-        @player.activate_at(player_position.x, player_position.y)
-
-        exit_position = BOARD.random_blank_tile
-        exit_position.set_contents(Exit.new(exit_position.x, exit_position.y))
-
-        GAME_STATE[:target_score] = TargetScoreCalculator.calculate
+    when :gameplay
+      unless GAME_STATE[:tiles_generated]
+        BOARD.generate_tiles
+        GAME_STATE[:tiles_generated] = true
+        BOARD.touch_global_last_move_time
       end
-    end
 
-    if Gosu::button_down?(Gosu::KbD) && Gosu.milliseconds - @last_debug_dump > 1000
-      @last_debug_dump = Gosu.milliseconds
-      puts "\n\n\n"
-      puts BOARD.inspect
+      unless GAME_STATE[:game_over] || GAME_STATE[:game_won]
+        BOARD.each_tile_in_reverse do |tile|
+          tile.update
+        end
+
+        if !@player.activated? && BOARD.everything_still?
+          player_position = BOARD.random_blank_tile
+          @player.activate_at(player_position.x, player_position.y)
+
+          exit_position = BOARD.random_blank_tile
+          exit_position.set_contents(Exit.new(exit_position.x, exit_position.y))
+
+          GAME_STATE[:target_score] = TargetScoreCalculator.calculate
+        end
+      end
+
+      if Gosu::button_down?(Gosu::KbD) && Gosu.milliseconds - @last_debug_dump > 1000
+        @last_debug_dump = Gosu.milliseconds
+        puts "\n\n\n"
+        puts BOARD.inspect
+      end
     end
   end
 
   def draw
     self.scale(2) do
-      BOARD.each_tile do |tile|
-        x_position = TILE_SIZE + tile.x * TILE_SIZE
-        y_position = TILE_SIZE + tile.y * TILE_SIZE
-
-        tile.draw(x_position, y_position)
-      end
-
-      hud_text = "SCORE: #{GAME_STATE[:score]} | GOAL: #{GAME_STATE[:target_score]} | GRENADES: #{@player.grenade_count}"
-      @font.draw(hud_text, TILE_SIZE, TILE_SIZE * 0.4, 0)
-
-      if GAME_STATE[:game_over]
+      case GAME_STATE[:current_mode]
+      when :menu
         x = (TILES_X * TILE_SIZE + TILE_SIZE * 2) / 2
         y = (TILES_Y * TILE_SIZE + TILE_SIZE * 2) / 2
-        @font.draw_rel("GAME OVER", x, y, 99, 0.5, 0.5, 10, 10, 0xff_ff0000)
-      elsif GAME_STATE[:game_won]
-        x = (TILES_X * TILE_SIZE + TILE_SIZE * 2) / 2
-        y = (TILES_Y * TILE_SIZE + TILE_SIZE * 2) / 2
-        @font.draw_rel("CONGRATULATIONS", x, y, 99, 0.5, 0.5, 7, 7, 0xff_ff0000)
+        @big_font.draw_rel("EMERALD HUNT", x, y - 20, 99, 0.5, 0.5, 0.4, 0.4)
+        @font.draw_rel("Press Enter to start", x, y + 20, 99, 0.5, 0.5)
+
+      when :gameplay
+        BOARD.each_tile do |tile|
+          x_position = TILE_SIZE + tile.x * TILE_SIZE
+          y_position = TILE_SIZE + tile.y * TILE_SIZE
+
+          tile.draw(x_position, y_position)
+        end
+
+        hud_text = "SCORE: #{GAME_STATE[:score]} | GOAL: #{GAME_STATE[:target_score]} | GRENADES: #{@player.grenade_count}"
+        @font.draw(hud_text, TILE_SIZE, TILE_SIZE * 0.4, 0)
+
+        if GAME_STATE[:game_over]
+          x = (TILES_X * TILE_SIZE + TILE_SIZE * 2) / 2
+          y = (TILES_Y * TILE_SIZE + TILE_SIZE * 2) / 2
+          @big_font.draw_rel("GAME OVER", x, y, 99, 0.5, 0.5, 1, 1, 0xff_ff0000)
+        elsif GAME_STATE[:game_won]
+          x = (TILES_X * TILE_SIZE + TILE_SIZE * 2) / 2
+          y = (TILES_Y * TILE_SIZE + TILE_SIZE * 2) / 2
+          @big_font.draw_rel("CONGRATULATIONS", x, y, 99, 0.5, 0.5, 0.7, 0.7, 0xff_ff0000)
+        end
       end
     end
   end
@@ -92,7 +118,9 @@ class Board
         Tile.new(x, y, NULL_OBJECT)
       end
     end
+  end
 
+  def generate_tiles
     each_tile_in_reverse do |tile|
       tile.set_contents(@random_object_generator.for_tile(tile.x, tile.y))
     end
