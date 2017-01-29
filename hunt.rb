@@ -84,18 +84,28 @@ end
 
 class Board
   def initialize
-    @random_object_generator = RandomObjectGenerator.new
+    @random_object_generator = RandomObjectGenerator.new(self)
     @global_last_move_time = 0
 
     @matrix = Array.new(TILES_Y) do |y|
       Array.new(TILES_X) do |x|
-        Tile.new(x, y, @random_object_generator.for_tile(x, y))
+        Tile.new(x, y, NULL_OBJECT)
       end
+    end
+
+    each_tile_in_reverse do |tile|
+      tile.set_contents(@random_object_generator.for_tile(tile.x, tile.y))
     end
   end
 
   def each_tile(&block)
     @matrix.flatten.each do |tile|
+      yield(tile)
+    end
+  end
+
+  def each_tile_in_reverse(&block)
+    @matrix.flatten.reverse_each do |tile|
       yield(tile)
     end
   end
@@ -221,6 +231,19 @@ class Board
     }.map { |coordinate_set|
       tile_at(*coordinate_set)
     }
+  end
+
+  def tile_sturdy?(x, y)
+    if !tile_in_bounds?(x, y + 1)
+      # if the tile below is out of bounds, then we're on the bottom of the board.
+      true
+    elsif [:brick, :dirt, :grenade, :bomb].include?(tile_at(x, y + 1).object_type)
+      # these objects are not slippery, so a slippable object won't slip off them.
+      # we could do this in a smarter way, but this'll do for now.
+      true
+    else
+      false
+    end
   end
 
   def tile_in_bounds?(x, y)

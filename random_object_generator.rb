@@ -1,6 +1,8 @@
 class RandomObjectGenerator
-  def initialize
+  def initialize(board)
+    @board = board
     @object_set = []
+    @object_backlog = []
 
     objects.each do |object|
       # starting from `@object_set[@object_set.size]` (ie. just past the end of the array),
@@ -24,13 +26,38 @@ class RandomObjectGenerator
     ]
   end
 
-  def for_tile(x, y)
-    object_class = @object_set.sample
+  def object_can_be_placed_at?(object_class, x, y)
+    if object_class == Bomb
+      @board.tile_sturdy?(x, y)
+    else
+      true
+    end
+  end
 
-    if object_class == NullObject
+  def for_tile(x, y)
+    usable_object = nil
+    tried_backlog = false
+
+    while usable_object == nil do
+      generated_object = if !tried_backlog && @object_backlog.any?
+        @object_backlog.shift
+      else
+        @object_set.sample
+      end
+
+      tried_backlog = true
+
+      if object_can_be_placed_at?(generated_object, x, y)
+        usable_object = generated_object
+      else
+        @object_backlog.push(generated_object)
+      end
+    end
+
+    if usable_object == NullObject
       NULL_OBJECT
     else
-      object_class.new(x, y)
+      usable_object.new(x, y)
     end
   end
 end
