@@ -12,6 +12,7 @@ TILE_SIZE = 16
 GAME_STATE = {
   game_won: false,
   game_over: false,
+  target_score: 50,
   score: 0
 }
 NULL_OBJECT = NullObject.new
@@ -61,7 +62,8 @@ class EmeraldHunt < Gosu::Window
         tile.draw(x_position, y_position)
       end
 
-      @font.draw("SCORE: #{GAME_STATE[:score]} | GRENADES: #{@player.grenade_count}", TILE_SIZE, TILE_SIZE * 0.4, 0)
+      hud_text = "SCORE: #{GAME_STATE[:score]} | GOAL: #{GAME_STATE[:target_score]} | GRENADES: #{@player.grenade_count}"
+      @font.draw(hud_text, TILE_SIZE, TILE_SIZE * 0.4, 0)
 
       if GAME_STATE[:game_over]
         x = (TILES_X * TILE_SIZE + TILE_SIZE * 2) / 2
@@ -70,7 +72,7 @@ class EmeraldHunt < Gosu::Window
       elsif GAME_STATE[:game_won]
         x = (TILES_X * TILE_SIZE + TILE_SIZE * 2) / 2
         y = (TILES_Y * TILE_SIZE + TILE_SIZE * 2) / 2
-        @font.draw_rel("CONGRATULATIONS", x, y, 99, 0.5, 0.5, 9, 9, 0xff_ff0000)
+        @font.draw_rel("CONGRATULATIONS", x, y, 99, 0.5, 0.5, 7, 7, 0xff_ff0000)
       end
     end
   end
