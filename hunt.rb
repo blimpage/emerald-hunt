@@ -34,7 +34,7 @@ class EmeraldHunt < Gosu::Window
 
   def update
     unless GAME_STATE[:game_over] || GAME_STATE[:game_won]
-      BOARD.each_tile do |tile|
+      BOARD.each_tile_in_reverse do |tile|
         tile.update
       end
 
