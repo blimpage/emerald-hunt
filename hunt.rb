@@ -6,6 +6,7 @@ require "gosu"
 Dir[File.join(__dir__, "objects", "*.rb")].each { |file| require file }
 
 require "./random_object_generator"
+require "./target_score_calculator"
 
 TILES_X, TILES_Y = 40, 20
 TILE_SIZE = 16
@@ -43,6 +44,8 @@ class EmeraldHunt < Gosu::Window
 
         exit_position = BOARD.random_blank_tile
         exit_position.set_contents(Exit.new(exit_position.x, exit_position.y))
+
+        GAME_STATE[:target_score] = TargetScoreCalculator.calculate
       end
     end
 
