@@ -34,9 +34,11 @@ class Diamond < BaseObject
     true
   end
 
+  def score_value
+    5
+  end
+
   def get_crushed_by(object)
-    if object.object_type == :player
-      GAME_STATE[:score] = GAME_STATE[:score] + 5
-    end
+    increment_score if object.object_type == :player
   end
 end

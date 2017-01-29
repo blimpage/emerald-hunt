@@ -25,9 +25,11 @@ class Emerald < BaseObject
     true
   end
 
+  def score_value
+    1
+  end
+
   def get_crushed_by(object)
-    if object.object_type == :player
-      GAME_STATE[:score] = GAME_STATE[:score] + 1
-    end
+    increment_score if object.object_type == :player
   end
 end

@@ -83,6 +83,14 @@ class BaseObject
     # last few precious seconds of life
   end
 
+  def score_value
+    0
+  end
+
+  def increment_score
+    GAME_STATE[:score] = GAME_STATE[:score] + score_value
+  end
+
   def touch_last_move_time
     @last_move_time = Gosu.milliseconds
   end
