@@ -10,6 +10,7 @@ require "./random_object_generator"
 TILES_X, TILES_Y = 40, 20
 TILE_SIZE = 16
 GAME_STATE = {
+  game_won: false,
   game_over: false,
   score: 0
 }
@@ -30,7 +31,7 @@ class EmeraldHunt < Gosu::Window
   end
 
   def update
-    unless GAME_STATE[:game_over]
+    unless GAME_STATE[:game_over] || GAME_STATE[:game_won]
       BOARD.each_tile do |tile|
         tile.update
       end
@@ -38,6 +39,9 @@ class EmeraldHunt < Gosu::Window
       if !@player.activated? && BOARD.everything_still?
         player_position = BOARD.random_blank_tile
         @player.activate_at(player_position.x, player_position.y)
+
+        exit_position = BOARD.random_blank_tile
+        exit_position.set_contents(Exit.new(exit_position.x, exit_position.y))
       end
     end
 
@@ -63,6 +67,10 @@ class EmeraldHunt < Gosu::Window
         x = (TILES_X * TILE_SIZE + TILE_SIZE * 2) / 2
         y = (TILES_Y * TILE_SIZE + TILE_SIZE * 2) / 2
         @font.draw_rel("GAME OVER", x, y, 99, 0.5, 0.5, 10, 10, 0xff_ff0000)
+      elsif GAME_STATE[:game_won]
+        x = (TILES_X * TILE_SIZE + TILE_SIZE * 2) / 2
+        y = (TILES_Y * TILE_SIZE + TILE_SIZE * 2) / 2
+        @font.draw_rel("CONGRATULATIONS", x, y, 99, 0.5, 0.5, 9, 9, 0xff_ff0000)
       end
     end
   end
