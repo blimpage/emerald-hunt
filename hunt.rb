@@ -162,6 +162,7 @@ class Board
     # explode it
     elsif y_direction.positive? &&
           x_direction.zero? &&
+          moving_object.in_motion &&
           moving_object.explode_on_contact?
       moving_object.explode
       false
@@ -170,6 +171,7 @@ class Board
     # explode the other thing
     elsif y_direction.positive? &&
           x_direction.zero? &&
+          moving_object.in_motion &&
           destination_tile.contents.explode_on_contact?
       destination_tile.contents.explode
       false
